@@ -106,6 +106,14 @@ detect_mac80211() {
 			dev_id="set wireless.radio${devidx}.macaddr=$(cat /sys/class/ieee80211/${dev}/macaddress)"
 		fi
 
+		wifi_disable=""
+		for adapter in /sys/class/net/*/address; do
+			case "$adapter" in
+				*/lo/address|*/wlan0/address) ;;
+				*) wifi_disable="set wireless.radio${devidx}.disabled=1";;
+			esac
+		done
+
 		uci -q batch <<-EOF
 			set wireless.radio${devidx}=wifi-device
 			set wireless.radio${devidx}.type=mac80211
@@ -113,7 +121,7 @@ detect_mac80211() {
 			set wireless.radio${devidx}.hwmode=11${mode_band}
 			${dev_id}
 			${ht_capab}
-			set wireless.radio${devidx}.disabled=1
+			${wifi_disable}
 
 			set wireless.default_radio${devidx}=wifi-iface
 			set wireless.default_radio${devidx}.device=radio${devidx}

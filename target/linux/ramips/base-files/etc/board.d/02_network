@@ -215,6 +215,9 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "5@eth0"
 		;;
+	f7c029)
+		ucidef_set_interface_lan "wlan0"
+		;;
 	asl26555-8M|\
 	asl26555-16M|\
 	rp-n53)
@@ -543,6 +546,9 @@ ramips_setup_macs()
 	belkin,f9k1109v1)
 		wan_mac=$(mtd_get_mac_ascii uboot-env HW_WAN_MAC)
 		lan_mac=$(mtd_get_mac_ascii uboot-env HW_LAN_MAC)
+		;;
+	f7c029)
+		lan_mac=$(cat /sys/class/net/wlan0/address)
 		;;
 	br-6475nd)
 		lan_mac=$(cat /sys/class/net/eth0/address)
